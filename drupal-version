@@ -1,0 +1,6 @@
+#!/bin/bash
+DRUPAL_INSTALLS=`cat /etc/check_mk/drupal-version.cfg`
+for i in $DRUPAL_INSTALLS ; do
+  VERSION=`cd "$i"; vendor/bin/drush status | egrep "^Drupal version *:" | sed 's/^.*: \([0-9.]\+\)/\1/' | xargs`
+  echo "0 \"Drupal version ${i}\" - Current version: $VERSION"
+done
