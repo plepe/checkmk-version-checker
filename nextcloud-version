@@ -1,0 +1,13 @@
+#!/bin/bash
+INSTALLS=`cat /etc/check_mk/nextcloud-version.cfg`
+LATEST=`curl https://download.nextcloud.com/server/releases/ 2>/dev/null | egrep ">nextcloud-.*zip<" | sed "s/^.*>nextcloud-\([0-9.]*\).zip<.*$/\1/" | tail -n1`
+
+for i in $INSTALLS ; do
+  VERSION=`grep "OC_VersionString =" "${i}/version.php" | sed "s/^.*= '\(.*\)';/\1/" | xargs`
+
+  if [ "${VERSION}" = "${LATEST}" ] ; then
+    echo "0 \"Nextcloud version ${i}\" - Current version: ${VERSION}"
+  else
+    echo "1 \"Nextcloud version ${i}\" - Current version: ${VERSION}, available: ${LATEST}"
+  fi
+done

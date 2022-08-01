@@ -11,3 +11,12 @@ Create a file `/etc/check_mk/drupal-version.cfg` with the path(s) of your drupal
 /var/www/drupal
 /home/homepage/drupal
 ```
+
+### nextcloud-version
+Copy the script `nextcloud-version` to `/usr/lib/check_mk_agent/local`.
+
+Create a file `/etc/check_mk/nextcloud-version.cfg` with the path(s) of your nextcloud installation(s) (one per line):
+
+```
+/var/www/nextcloud
+```
