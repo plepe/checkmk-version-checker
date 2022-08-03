@@ -1,0 +1,13 @@
+#!/bin/bash
+INSTALLS=`cat /etc/check_mk/mediawiki-version.cfg`
+
+LATEST=`curl -s https://www.mediawiki.org/wiki/Download | egrep '"https://releases.wikimedia.org/mediawiki/[0-9.]*/mediawiki-[0-9.]*\.zip\"' | head -n1 | sed "s/^.*mediawiki-\([0-9.]*\)\.zip.*$/\1/" | xargs`
+for I in $INSTALLS ; do
+  VERSION=`grep '$mwVersion' "${I}/includes/PHPVersionCheck.php" | sed "s/^.*'\([0-9.]*\)';/\1/" | xargs`
+
+  if [ "${VERSION}" = "${LATEST}" ] ; then
+    echo "0 \"Mediawiki version ${I}\" - Current version: ${VERSION}"
+  else
+    echo "1 \"Mediawiki version ${I}\" - Current version: ${VERSION}, available: ${LATEST}"
+  fi
+done

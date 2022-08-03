@@ -12,6 +12,15 @@ Create a file `/etc/check_mk/drupal-version.cfg` with the path(s) of your drupal
 /home/homepage/drupal
 ```
 
+### mediawiki-version
+Copy the script `mediawiki-version` to `/usr/lib/check_mk_agent/local`.
+
+Create a file `/etc/check_mk/mediawiki-version.cfg` with the path(s) of your mediawiki installation(s) (one per line):
+
+```
+/var/www/mediawiki
+```
+
 ### nextcloud-version
 Copy the script `nextcloud-version` to `/usr/lib/check_mk_agent/local`.
 
