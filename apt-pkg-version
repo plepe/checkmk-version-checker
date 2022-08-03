@@ -1,0 +1,12 @@
+#!/bin/bash
+PKGS=`cat /etc/check_mk/apt-pkg-version.cfg`
+for PKG in ${PKGS} ; do
+  VERSION=`dpkg-query --showformat='${Version}' --show ${PKG}`
+  LATEST=`apt -qq list ${PKG} 2>/dev/null | awk '{ print $2 }' | head -n1`
+
+  if [ "${VERSION}" = "${LATEST}" ] ; then
+    echo "0 \"APT PKG ${PKG}\" - Current version: ${VERSION}"
+  else
+    echo "1 \"APT PKG ${PKG}\" - Current version: ${VERSION}, available: ${LATEST}"
+  fi
+done
