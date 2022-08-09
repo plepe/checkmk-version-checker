@@ -40,3 +40,8 @@ Create a file `/etc/check_mk/apt-pkg-version.cfg` with names of apt packages (on
 apache2
 gitlab-ce
 ```
+
+### check-mk-version
+Checks if a new check-mk-raw version is available.
+
+Copy the script `check-mk-version` to `/usr/lib/check_mk_agent/local`.
