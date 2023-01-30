@@ -2,6 +2,15 @@
 CheckMK script, which prints prints the current version and compares it with the most-up-to-date minor release.
 
 ## INSTALLATION
+### agent-updater
+Upgrade agent and its plugins to the newest version
+
+Create a file `/etc/check_mk/agent-updater.cfg` with the following content:
+
+```
+URL=https://www.example.com/checkmk
+```
+
 ### drupal-version
 Copy the script `drupal-version` to `/usr/lib/check_mk_agent/local`.
 

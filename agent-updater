@@ -1,0 +1,26 @@
+#!/bin/bash
+
+URL=$(cat /etc/check_mk/agent-updater.cfg | egrep '^URL=' | cut -d= -f2)
+
+installed_version=$(dpkg-query -W check-mk-agent | cut -d$'\t' -f2)
+file=$(curl -s ${URL}/agents/ | egrep "^<li><a href" | sed 's/<li><a href="\(.*\)">.*$/\1/' | grep 'all.deb')
+current_version=$(echo $file | cut -d_ -f2)
+echo "check-mk-agent: installed={$installed_version}, current={$current_version}"
+
+if [ "$installed_version" != "$current_version" ]; then
+  curl -s -o/tmp/check-mk-agent.deb https://www.cg.tuwien.ac.at/checkmk/agents/${file}
+  apt install /tmp/check-mk-agent.deb
+  rm /tmp/check-mk-agent.deb
+fi
+
+for plugin in $(ls /usr/lib/check_mk_agent/plugins) ; do
+  curl -s -o/tmp/checkmk-plugin ${URL}/agents/plugins/${plugin}
+  diff -q /usr/lib/check_mk_agent/plugins/${plugin} /tmp/checkmk-plugin >/dev/null
+  if [ "$?" == "1" ] ; then
+    echo "plugin ${plugin}: new version"
+    mv /tmp/checkmk-plugin /usr/lib/check_mk_agent/plugins/${plugin}
+    chmod +x /usr/lib/check_mk_agent/plugins/${plugin}
+  else
+    echo "plugin ${plugin}: up-to-date"
+  fi
+done
