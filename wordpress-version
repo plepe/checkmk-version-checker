@@ -1,0 +1,12 @@
+#!/bin/bash
+INSTALLS=`cat /etc/check_mk/wordpress-version.cfg`
+for i in $INSTALLS ; do
+  LATEST=`curl -s https://wordpress.org/download/ | grep '"softwareVersion": "' | cut -d\" -f4`
+  VERSION=`egrep '^\$wp_version' '${i}/wp-includes/version.php' | cut -d\' -f2`
+
+  if [ "${VERSION}" = "${LATEST}" ] ; then
+    echo "0 \"Drupal version ${i}\" - Current version: ${VERSION}"
+  else
+    echo "1 \"Drupal version ${i}\" - Current version: ${VERSION}, available: ${LATEST}"
+  fi
+done
