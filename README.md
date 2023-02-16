@@ -69,6 +69,15 @@ Create a file `/etc/check_mk/rainloop-version.cfg` with the path(s) of your drup
 /var/www/rainloop
 ```
 
+### roundcube-version
+Copy the script `roundcube-version` to `/usr/lib/check_mk_agent/local`.
+
+Create a file `/etc/check_mk/roundcube-version.cfg` with the path(s) of your drupal installation(s) (one per line):
+
+```
+/var/www/roundcube
+```
+
 ### check-mk-version
 Checks if a new check-mk-raw version is available.
 
