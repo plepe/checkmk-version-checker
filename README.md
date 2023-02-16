@@ -60,6 +60,15 @@ apache2
 gitlab-ce
 ```
 
+### rainloop-version
+Copy the script `rainloop-version` to `/usr/lib/check_mk_agent/local`.
+
+Create a file `/etc/check_mk/rainloop-version.cfg` with the path(s) of your drupal installation(s) (one per line):
+
+```
+/var/www/rainloop
+```
+
 ### check-mk-version
 Checks if a new check-mk-raw version is available.
 
