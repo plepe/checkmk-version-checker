@@ -5,8 +5,8 @@ for i in $INSTALLS ; do
   VERSION=`egrep '^\\$wp_version' "${i}/wp-includes/version.php" | cut -d\' -f2`
 
   if [ "${VERSION}" = "${LATEST}" ] ; then
-    echo "0 \"Drupal version ${i}\" - Current version: ${VERSION}"
+    echo "0 \"Wordpress version ${i}\" - Current version: ${VERSION}"
   else
-    echo "1 \"Drupal version ${i}\" - Current version: ${VERSION}, available: ${LATEST}"
+    echo "1 \"Wordpress version ${i}\" - Current version: ${VERSION}, available: ${LATEST}"
   fi
 done
