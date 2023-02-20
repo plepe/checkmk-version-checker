@@ -1,4 +1,5 @@
 #!/bin/bash
+IFS=$'\n'
 REPOSITORY_INSTALLS=`cat /etc/check_mk/repository-git-version.cfg`
 for i in $REPOSITORY_INSTALLS ; do
   R_NAME=$(echo $i | cut -d: -f1)
@@ -10,8 +11,8 @@ for i in $REPOSITORY_INSTALLS ; do
   VERSION=$(sudo -u${R_USER} git describe --tags)
 
   if [ "${VERSION}" = "${LATEST}" ] ; then
-    echo "0 ${R_NAME} - Current version: ${VERSION}"
+    echo "0 \"${R_NAME}\" - Current version: ${VERSION}"
   else
-    echo "1 ${R_NAME} - Current version: ${VERSION}, available: ${LATEST}"
+    echo "1 \"${R_NAME}\" - Current version: ${VERSION}, available: ${LATEST}"
   fi
 done
