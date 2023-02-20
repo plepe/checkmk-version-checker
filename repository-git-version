@@ -1,0 +1,17 @@
+#!/bin/bash
+REPOSITORY_INSTALLS=`cat /etc/check_mk/repository-git-version.cfg`
+for i in $REPOSITORY_INSTALLS ; do
+  R_NAME=$(echo $i | cut -d: -f1)
+  R_PATH=$(echo $i | cut -d: -f2)
+  R_USER=$(echo $i | cut -d: -f3)
+
+  cd "${R_PATH}"
+  LATEST=$(sudo -u${R_USER} git fetch && sudo -u${R_USER} git tag -l --sort -version:refname  | egrep -v '^v' | head -n1)
+  VERSION=$(sudo -u${R_USER} git describe --tags)
+
+  if [ "${VERSION}" = "${LATEST}" ] ; then
+    echo "0 ${R_NAME} - Current version: ${VERSION}"
+  else
+    echo "1 ${R_NAME} - Current version: ${VERSION}, available: ${LATEST}"
+  fi
+done

@@ -78,6 +78,15 @@ Create a file `/etc/check_mk/roundcube-version.cfg` with the path(s) of your dru
 /var/www/roundcube
 ```
 
+### repository-git-version
+Checks a Git Repository if newer tags are available. The script will execute 'git fetch', that's why a user in the configuration script is necessary.
+
+Copy the script `repository-git-version` to `/usr/lib/check_mk_agent/local`.
+Create a file `/etc/check_mk/repository-git-version.cfg` with Name, path and username (one per line):
+```
+Name:/path/to/repository:username
+```
+
 ### check-mk-version
 Checks if a new check-mk-raw version is available.
 
