@@ -12,7 +12,7 @@ current_version=$(echo $file | cut -d_ -f2)
 echo "check-mk-agent: installed={$installed_version}, current={$current_version}"
 
 if [ "$installed_version" != "$current_version" ]; then
-  curl -s -o/tmp/check-mk-agent.deb https://www.cg.tuwien.ac.at/checkmk/agents/${file}
+  curl -s -o/tmp/check-mk-agent.deb ${URL}/agents/${file}
   apt install /tmp/check-mk-agent.deb
   rm /tmp/check-mk-agent.deb
 fi
