@@ -18,7 +18,11 @@ if [ "$installed_version" != "$current_version" ]; then
 fi
 
 for plugin in $(ls /usr/lib/check_mk_agent/plugins) ; do
-  curl -s -o/tmp/checkmk-plugin ${URL}/agents/plugins/${plugin}
+  http_code=$(curl -s -v -o/tmp/checkmk-plugin ${URL}/agents/plugins/${plugin} 2>&1| grep '< HTTP/1.1 ' | cut -d' ' -f3)
+  if [ "${http_code}" != "200" ]; then
+    echo "plugin ${plugin}: error ${http_code}"
+    continue
+  fi
   diff -q /usr/lib/check_mk_agent/plugins/${plugin} /tmp/checkmk-plugin >/dev/null
   if [ "$?" == "1" ] ; then
     echo "plugin ${plugin}: new version"
