@@ -1,5 +1,9 @@
 #!/bin/bash
 
+# Update code
+cd $(dirname $(readlink -f -- $(readlink -f -- "$0")))
+git pull
+
 URL=$(cat /etc/check_mk/agent-updater.cfg | egrep '^URL=' | cut -d= -f2)
 
 installed_version=$(dpkg-query -W check-mk-agent | cut -d$'\t' -f2)
