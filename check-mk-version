@@ -1,6 +1,8 @@
 #!/bin/bash
 VERSION=`dpkg -l | grep check-mk-raw | egrep '^ii' | sed 's/^.*check-mk-raw-\([^ \t]*\).*$/\1/'`
-LATEST=`curl -s https://checkmk.com/de/download | grep "window.downloads =" | sed 's/^.*window.downloads = {"cmk":{"cre":{"\([0-9a-z.]*\)":.*/\1/'`
+LIST=`curl -s https://checkmk.com/de/download | grep "window.downloads =" | sed 's/^.*window.downloads = \(.*\);/\1/'`
+# filter list for the newest production version
+LATEST=$(echo $LIST | jq -r '.cmk.cre | keys | map(select(test("p"))) | reverse [0]')
 
 if [ "${VERSION}" = "${LATEST}" ] ; then
 echo "0 \"check-mk version\" - Current version: ${VERSION}"
