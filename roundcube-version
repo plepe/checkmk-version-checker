@@ -1,7 +1,7 @@
 #!/bin/bash
 INSTALLS=`cat /etc/check_mk/roundcube-version.cfg`
 for i in $INSTALLS ; do
-  LATEST=$(curl -s https://roundcube.net/download/ | grep "Stable version - " | cut -d- -f2 | cut -d\< -f1 | cut -b2-)
+  LATEST=$(curl -s https://roundcube.net/download/ | grep "Stable version - " | cut -d- -f2 | cut -d\< -f1 | cut -b2- | xargs)
   VERSION=$(grep "define('RCUBE_VERSION'" "${i}/program/lib/Roundcube/bootstrap.php" | cut -d\' -f4)
 
   if [ "${VERSION}" = "${LATEST}" ] ; then
