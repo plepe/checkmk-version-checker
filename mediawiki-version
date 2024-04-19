@@ -1,13 +1,22 @@
 #!/bin/bash
 INSTALLS=`cat /etc/check_mk/mediawiki-version.cfg`
 
-LATEST=`curl -s https://www.mediawiki.org/wiki/Download | egrep '"https://releases.wikimedia.org/mediawiki/[0-9.]*/mediawiki-[0-9.]*\.zip\"' | head -n1 | sed "s/^.*mediawiki-\([0-9.]*\)\.zip.*$/\1/" | xargs`
+ALL_SUPPORTED=`curl -s https://www.mediawiki.org/wiki/Download | egrep '"https://releases.wikimedia.org/mediawiki/[0-9.]*/mediawiki-[0-9.]*\.zip\"' | sed "s/^.*mediawiki-\([0-9.]*\)\.zip.*$/\1/"`
+LATEST=$(echo "${ALL_SUPPORTED}" | head -n1 | xargs)
+
 for I in $INSTALLS ; do
   VERSION=`grep "'MW_VERSION'" "${I}/includes/Defines.php" | sed "s/^.*'\([0-9.]*\)' );/\1/" | xargs`
 
+  CURRENT_MINOR=$(echo ${VERSION} | cut -d\. -f1-2 | xargs)
+  LATEST_MINOR=$(echo "${ALL_SUPPORTED}" | grep "^${CURRENT_MINOR}" | head -n1 | xargs)
+
   if [ "${VERSION}" = "${LATEST}" ] ; then
     echo "0 \"Mediawiki version ${I}\" - Current version: ${VERSION}"
-  else
+  elif [ "${VERSION}" = "${LATEST_MINOR}" ] ; then
+    echo "0 \"Mediawiki version ${I}\" - Current version: ${VERSION} (still supported), available: ${LATEST}"
+  elif [ "${LATEST_MINOR}" = "" ] || [ "${LATEST_MINOR}" = "${LATEST}" ] ; then
     echo "1 \"Mediawiki version ${I}\" - Current version: ${VERSION}, available: ${LATEST}"
+  else
+      echo "1 \"Mediawiki version ${I}\" - Current version: ${VERSION}, available: ${LATEST} or ${LATEST_MINOR}"
   fi
 done
