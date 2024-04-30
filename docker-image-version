@@ -1,0 +1,27 @@
+#!/bin/bash
+for CONTAINER in $(docker ps -aq) ; do
+  IMAGE=$(docker inspect "${CONTAINER}" | jq -r '.[0].Image')
+  if [ "${IMAGE}" = "" ] ; then continue ; fi
+
+  DIGEST=$(docker inspect "${IMAGE}" | jq -r '.[0].RepoDigests[0]')
+  if [ "${DIGEST}" = "" ] ; then continue ; fi
+
+  NAME=$(echo "${DIGEST}" | cut -d'@' -f1)
+  if [ "${NAME}" = "" ] ; then continue ; fi
+  if [ "${NAME}" = "null" ] ; then continue ; fi
+
+  VERSION_HASH=$(echo "${DIGEST}" | cut -d'@' -f2)
+  if [ "${VERSION_HASH}" = "" ] ; then continue ; fi
+
+  DOCKER_HUB=$(curl -s https://hub.docker.com/v2/repositories/${NAME}/tags?page_size=100)
+
+  VERSION=$(echo $DOCKER_HUB | jq -r ".results[] | select(.digest == \"${VERSION_HASH}\").name" | tail -n1)
+
+  LATEST_HASH=$(echo ${DOCKER_HUB} | jq -r '.results[0].digest')
+  if [ "${VERSION_HASH}" = "${LATEST_HASH}" ] ; then
+    echo "0 \"Docker image ${NAME}\" - Current version: ${VERSION}"
+  else
+    LATEST=$(echo $DOCKER_HUB | jq -r ".results[] | select(.digest == \"${LATEST_HASH}\").name" | tail -n1)
+    echo "1 \"Docker image ${NAME}\" - Current version: ${VERSION}, available: ${LATEST}"
+  fi
+done

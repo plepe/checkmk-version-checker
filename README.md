@@ -87,6 +87,11 @@ Create a file `/etc/check_mk/repository-git-version.cfg` with Name, path and use
 Name:/path/to/repository:username
 ```
 
+### docker-image-version
+Checks all docker images if a new version on Docker Hub is available. Requires [jq](https://jqlang.github.io/jq/) installed.
+
+Copy the script `docker-image-version` to `/usr/lib/check_mk_agent/local`.
+
 ### check-mk-version
 Checks if a new check-mk-raw version is available.
 
