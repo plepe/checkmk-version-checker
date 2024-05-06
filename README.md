@@ -92,6 +92,11 @@ Checks all docker images if a new version on Docker Hub is available. Requires [
 
 Copy the script `docker-image-version` to `/usr/lib/check_mk_agent/local`.
 
+You can watch images for new version which do not run directly, by listing them in `/etc/check_mk/docker-image-version.cfg` (one per line):
+```
+discourse/base
+```
+
 ### check-mk-version
 Checks if a new check-mk-raw version is available.
 

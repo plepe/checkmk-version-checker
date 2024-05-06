@@ -41,6 +41,44 @@ for CONTAINER in $(docker ps -aq) ; do
     echo "0 \"Docker image ${NAME}\" - Current version: ${VERSION}"
   else
     LATEST=$(echo $DOCKER_HUB | jq -r ".results[] | select(.digest == \"${LATEST_HASH}\").name" | tail -n1)
-    echo "${ERROR_VAL} \"Docker image ${NAME}\" - Current version: ${VERSION}, available: ${LATEST}{$ERROR_ADD}"
+    echo "${ERROR_VAL} \"Docker image ${NAME}\" - Current version: ${VERSION}, available: ${LATEST}${ERROR_ADD}"
+  fi
+done
+
+if [ ! -f /etc/check_mk/docker-image-version.cfg ] ; then
+  exit 0
+fi
+
+IMAGES=$(cat /etc/check_mk/docker-image-version.cfg)
+for NAME in $IMAGES ; do
+  ERROR_VAL=1
+  ERROR_ADD=""
+
+  VERSION_HASH=$(docker image ls --format '{{.Digest}}' "${NAME}")
+  if [ "${VERSION_HASH}" = "" ] ; then
+    echo "${ERROR_VAL} \"Docker image ${NAME}\" - Can't get digest${ERROR_ADD}"
+    continue
+  fi
+
+  DOCKER_HUB=$(curl -s https://hub.docker.com/v2/repositories/${NAME}/tags?page_size=100)
+
+  HAS_MESSAGE=$(echo $DOCKER_HUB | jq -r ".message")
+  if [ "${HAS_MESSAGE}" != "null" ] ; then
+    echo "${ERROR_VAL} \"Docker image ${NAME}\" - Error: ${HAS_MESSAGE}${ERROR_ADD}"
+    continue
+  fi
+
+  VERSION=$(echo $DOCKER_HUB | jq -r ".results[] | select(.digest == \"${VERSION_HASH}\").name" | tail -n1)
+  if [ "${VERSION}" = "" ] ; then
+    echo "${ERROR_VAL} \"Docker image ${NAME}\" - Can't resolve version (too old?)${ERROR_ADD}"
+    continue
+  fi
+
+  LATEST_HASH=$(echo ${DOCKER_HUB} | jq -r '.results[0].digest')
+  if [ "${VERSION_HASH}" = "${LATEST_HASH}" ] ; then
+    echo "0 \"Docker image ${NAME}\" - Current version: ${VERSION}"
+  else
+    LATEST=$(echo $DOCKER_HUB | jq -r ".results[] | select(.digest == \"${LATEST_HASH}\").name" | tail -n1)
+    echo "${ERROR_VAL} \"Docker image ${NAME}\" - Current version: ${VERSION}, available: ${LATEST}${ERROR_ADD}"
   fi
 done
