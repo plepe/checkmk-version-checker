@@ -10,6 +10,15 @@ for CONTAINER in $(docker ps -aq) ; do
   if [ "${NAME}" = "" ] ; then continue ; fi
   if [ "${NAME}" = "null" ] ; then continue ; fi
 
+  IS_ONLINE=$(docker ps --format '{{.Image}}' | grep -Fx "${NAME}")
+  if [ "${IS_ONLINE}" = "" ] ; then
+    ERROR_VAL=0
+    ERROR_ADD=' (container not running)'
+  else
+    ERROR_VAL=1
+    ERROR_ADD=''
+  fi
+
   VERSION_HASH=$(echo "${DIGEST}" | cut -d'@' -f2)
   if [ "${VERSION_HASH}" = "" ] ; then continue ; fi
 
@@ -17,13 +26,13 @@ for CONTAINER in $(docker ps -aq) ; do
 
   HAS_MESSAGE=$(echo $DOCKER_HUB | jq -r ".message")
   if [ "${HAS_MESSAGE}" != "null" ] ; then
-    echo "1 \"Docker image ${NAME}\" - Error: ${HAS_MESSAGE}"
+    echo "${ERROR_VAL} \"Docker image ${NAME}\" - Error: ${HAS_MESSAGE}${ERROR_ADD}"
     continue
   fi
 
   VERSION=$(echo $DOCKER_HUB | jq -r ".results[] | select(.digest == \"${VERSION_HASH}\").name" | tail -n1)
   if [ "${VERSION}" = "" ] ; then
-    echo "1 \"Docker image ${NAME}\" - Can't resolve version (too old?)"
+    echo "${ERROR_VAL} \"Docker image ${NAME}\" - Can't resolve version (too old?)${ERROR_ADD}"
     continue
   fi
 
@@ -32,6 +41,6 @@ for CONTAINER in $(docker ps -aq) ; do
     echo "0 \"Docker image ${NAME}\" - Current version: ${VERSION}"
   else
     LATEST=$(echo $DOCKER_HUB | jq -r ".results[] | select(.digest == \"${LATEST_HASH}\").name" | tail -n1)
-    echo "1 \"Docker image ${NAME}\" - Current version: ${VERSION}, available: ${LATEST}"
+    echo "${ERROR_VAL} \"Docker image ${NAME}\" - Current version: ${VERSION}, available: ${LATEST}{$ERROR_ADD}"
   fi
 done
