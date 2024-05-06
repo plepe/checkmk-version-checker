@@ -16,12 +16,16 @@ for CONTAINER in $(docker ps -aq) ; do
   DOCKER_HUB=$(curl -s https://hub.docker.com/v2/repositories/${NAME}/tags?page_size=100)
 
   HAS_MESSAGE=$(echo $DOCKER_HUB | jq -r ".message")
-  if [ "${HAS_MESSAGE}" != "" ] ; then
+  if [ "${HAS_MESSAGE}" != "null" ] ; then
     echo "1 \"Docker image ${NAME}\" - Error: ${HAS_MESSAGE}"
     continue
   fi
 
   VERSION=$(echo $DOCKER_HUB | jq -r ".results[] | select(.digest == \"${VERSION_HASH}\").name" | tail -n1)
+  if [ "${VERSION}" = "" ] ; then
+    echo "1 \"Docker image ${NAME}\" - Can't resolve version (too old?)"
+    continue
+  fi
 
   LATEST_HASH=$(echo ${DOCKER_HUB} | jq -r '.results[0].digest')
   if [ "${VERSION_HASH}" = "${LATEST_HASH}" ] ; then
