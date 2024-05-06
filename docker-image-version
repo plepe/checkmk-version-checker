@@ -36,7 +36,9 @@ for CONTAINER in $(docker ps -aq) ; do
     continue
   fi
 
-  LATEST_HASH=$(echo ${DOCKER_HUB} | jq -r '.results[0].digest')
+  ARCH=$(echo $DOCKER_HUB | jq -r ".results[] | select(.digest == \"${VERSION_HASH}\").images[0].architecture" | tail -n1)
+
+  LATEST_HASH=$(echo ${DOCKER_HUB} | jq -r ".results[] | select(.images[0].architecture == \"${ARCH}\") | .digest" | head -n1)
   if [ "${VERSION_HASH}" = "${LATEST_HASH}" ] ; then
     echo "0 \"Docker image ${NAME}\" - Current version: ${VERSION}"
   else
@@ -74,7 +76,9 @@ for NAME in $IMAGES ; do
     continue
   fi
 
-  LATEST_HASH=$(echo ${DOCKER_HUB} | jq -r '.results[0].digest')
+  ARCH=$(echo $DOCKER_HUB | jq -r ".results[] | select(.digest == \"${VERSION_HASH}\").images[0].architecture" | tail -n1)
+
+  LATEST_HASH=$(echo ${DOCKER_HUB} | jq -r ".results[] | select(.images[0].architecture == \"${ARCH}\") | .digest" | head -n1)
   if [ "${VERSION_HASH}" = "${LATEST_HASH}" ] ; then
     echo "0 \"Docker image ${NAME}\" - Current version: ${VERSION}"
   else
