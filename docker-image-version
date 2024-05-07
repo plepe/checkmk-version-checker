@@ -10,6 +10,10 @@ for CONTAINER in $(docker ps -aq) ; do
   if [ "${NAME}" = "" ] ; then continue ; fi
   if [ "${NAME}" = "null" ] ; then continue ; fi
 
+  if ! [[ ${NAME} =~ "/" ]] ; then
+    NAME="library/${NAME}"
+  fi
+
   IS_ONLINE=$(docker ps --format '{{.Image}}' | grep -Fx "${NAME}")
   if [ "${IS_ONLINE}" = "" ] ; then
     ERROR_VAL=0
