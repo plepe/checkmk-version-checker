@@ -1,7 +1,7 @@
 #!/bin/bash
 . "$(dirname "$(readlink -f "$0")")/functions.sh"
 
-VERSION=`dpkg -l | grep check-mk-raw | egrep '^ii' | sed 's/^.*check-mk-raw-\([^ \t]*\).*$/\1/'`
+VERSION=$(grep OMD_VERSION /opt/omd/sites/*/share/omd/omd.info | cut -d'=' -f2 | xargs)
 LIST=`curl -s https://checkmk.com/de/download | grep "window.downloads =" | sed 's/^.*window.downloads = \(.*\);/\1/'`
 # filter list for the newest production version
 SUPPORTED_VERSIONS=$(echo $LIST | jq -r '.cmk.cre | keys | map(select(test("p"))) | reverse | join("\n")')
