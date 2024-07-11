@@ -2,6 +2,11 @@
 DRUPAL_INSTALLS=`cat /etc/check_mk/drupal-version.cfg`
 for i in $DRUPAL_INSTALLS ; do
   LATEST=`cd "$i"; composer show --no-interaction --latest --minor-only drupal/core 2>/dev/null | grep '^latest *:' | sed 's/^latest *: \([0-9.]\+\)$/\1/' | xargs`
+  if [ "${LATEST}" = "" ] ; then
+    echo "2 \"Drupal version ${i}\" - Can't resolve current version"
+    continue
+  fi
+
   VERSION=`cd "$i"; vendor/bin/drush status | egrep "^Drupal version *:" | sed 's/^.*: \([0-9.]\+\)/\1/' | xargs`
 
   if [ "${VERSION}" = "${LATEST}" ] ; then
