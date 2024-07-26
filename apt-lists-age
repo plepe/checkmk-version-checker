@@ -1,12 +1,13 @@
 #!/bin/sh
 REPO=/var/lib/apt/lists/
 AGE=$(echo "$(date '+%s') - $(stat -c %Y ${REPO})" | bc)
+AGE_DAYS=$(echo "scale=1; $AGE / 86400" | bc -l)
 
 if [ $AGE -gt 604800 ] ; then
-  echo '2 "apt-lists" - repository list is more than a week old'
+  echo "2 \"apt-lists\" - repository list is more than a week old (${AGE_DAYS} days)"
 elif [ $AGE -gt 86400 ] ; then
-  echo '1 "apt-lists" - repository list is more than a day old'
+  echo "1 \"apt-lists\" - repository list is more than a day old (${AGE_DAYS} days)"
 else
-  echo '0 "apt-lists" - Up to date'
+  echo "0 \"apt-lists\" - Up to date (${AGE_DAYS} days)"
 fi
 
