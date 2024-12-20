@@ -14,6 +14,11 @@ evaluate () {
     CHECK_NAME="${APP} version"
   fi
 
+  if [ "${CURRENT_VERSION}" = "" ] ; then
+    echo "2 \"${CHECK_NAME}\" - Can't evaluate version"
+    return
+  fi
+
   local LATEST_VERSION=$(echo "${SUPPORTED_VERSIONS}" | head -n1 | xargs)
   local CURRENT_MINOR=$(echo ${CURRENT_VERSION} | cut -d\. -f1-2 | xargs)
   local LATEST_MINOR=$(echo "${SUPPORTED_VERSIONS}" | grep "^${CURRENT_MINOR}\." | head -n1 | xargs)
