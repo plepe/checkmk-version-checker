@@ -12,7 +12,7 @@ URL=https://www.example.com/checkmk
 ```
 
 ### drupal-version
-Copy the script `drupal-version` to `/usr/lib/check_mk_agent/local`.
+Copy the script `drupal-version` to `/usr/lib/check_mk_agent/local`.  Requires [jq](https://jqlang.github.io/jq/) installed.
 
 Create a file `/etc/check_mk/drupal-version.cfg` with the path(s) of your drupal installation(s) (one per line):
 
