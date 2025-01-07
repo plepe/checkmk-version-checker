@@ -5,6 +5,10 @@ cd $(dirname $(readlink -f -- $(readlink -f -- "$0")))
 git pull
 
 URL=$(cat /etc/check_mk/agent-updater.cfg | egrep '^URL=' | cut -d= -f2)
+if [ "$URL" == "" ] ; then
+  echo "agent-updater: no URL set in config file"
+  exit 1
+fi
 
 installed_version=$(dpkg-query -W check-mk-agent | cut -d$'\t' -f2)
 file=$(curl -s ${URL}/agents/ | egrep "^<li><a href" | sed 's/<li><a href="\(.*\)">.*$/\1/' | grep 'all.deb')
