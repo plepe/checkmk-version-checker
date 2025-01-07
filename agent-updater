@@ -10,6 +10,8 @@ if [ "$URL" == "" ] ; then
   exit 1
 fi
 
+PLUGIN_SKIP_UPDATE=$(cat /etc/check_mk/agent-updater.cfg | egrep '^PLUGIN_SKIP_UPDATE=' | cut -d= -f2)
+
 installed_version=$(dpkg-query -W check-mk-agent | cut -d$'\t' -f2)
 file=$(curl -s ${URL}/agents/ | egrep "^<li><a href" | sed 's/<li><a href="\(.*\)">.*$/\1/' | grep 'all.deb')
 current_version=$(echo $file | cut -d_ -f2)
@@ -22,6 +24,11 @@ if [ "$installed_version" != "$current_version" ]; then
 fi
 
 for plugin in $(ls /usr/lib/check_mk_agent/plugins) ; do
+  if $(echo "${PLUGIN_SKIP_UPDATE}" | grep -w -q "${plugin}") ; then
+    echo "plugin ${plugin}: skipped"
+    continue
+  fi
+
   http_code=$(curl -s -v -o/tmp/checkmk-plugin ${URL}/agents/plugins/${plugin} 2>&1| grep '< HTTP/1.1 ' | cut -d' ' -f3)
   if [ "${http_code}" != "200" ]; then
     echo "plugin ${plugin}: error ${http_code}"

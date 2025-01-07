@@ -11,6 +11,11 @@ Create a file `/etc/check_mk/agent-updater.cfg` with the following content:
 URL=https://www.example.com/checkmk
 ```
 
+You may skip selected plugin upgrades with:
+```
+PLUGIN_SKIP_UPDATE=smart mk_apt
+```
+
 ### drupal-version
 Copy the script `drupal-version` to `/usr/lib/check_mk_agent/local`.  Requires [jq](https://jqlang.github.io/jq/) installed.
 
