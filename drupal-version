@@ -1,8 +1,9 @@
 #!/bin/bash
 . "$(dirname "$(readlink -f "$0")")/functions.sh"
 
+DATE=$(date +"%Y-%m-%d")
 DRUPAL_INSTALLS=`cat /etc/check_mk/drupal-version.cfg`
-ALL_SUPPORTED=$(curl https://endoflife.date/api/drupal.json | jq -r ".[] | select(.eol >= \"2024-12-20\").latest")
+ALL_SUPPORTED=$(curl https://endoflife.date/api/drupal.json | jq -r ".[] | select(.eol >= \"${DATE}\" or .eol == false).latest")
 
 for i in $DRUPAL_INSTALLS ; do
   VERSION=`cd "$i"; vendor/bin/drush status | egrep "^Drupal version *:" | sed 's/^.*: \([0-9.]\+\)/\1/' | xargs`
