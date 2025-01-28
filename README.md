@@ -26,6 +26,15 @@ Create a file `/etc/check_mk/drupal-version.cfg` with the path(s) of your drupal
 /home/homepage/drupal
 ```
 
+### matomo-version
+Copy the script `matomo-version` to `/usr/lib/check_mk_agent/local`.  Requires [jq](https://jqlang.github.io/jq/) installed.
+
+Create a file `/etc/check_mk/matomo-version.cfg` with the path(s) of your matomo installation(s) (one per line):
+
+```
+/var/www/matomo/
+```
+
 ### wordpress-version
 Copy the script `wordpress-version` to `/usr/lib/check_mk_agent/local`.
 
