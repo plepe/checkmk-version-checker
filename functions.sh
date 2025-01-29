@@ -38,7 +38,7 @@ get_supported_endoflife () {
   local SERVICE=${1}
   local DATE=$(date +"%Y-%m-%d")
 
-  echo $(curl https://endoflife.date/api/${SERVICE}.json | jq ".[] | select(.eol >= \"${DATE}\" or .eol == false)" | jq -s . | jq "sort_by(.cycle | split(\".\") | map(tonumber)) | reverse" | jq -r ".[].latest")
+  echo "$(curl https://endoflife.date/api/${SERVICE}.json | jq ".[] | select(.eol >= \"${DATE}\" or .eol == false)" | jq -s . | jq "sort_by(.cycle | split(\".\") | map(tonumber)) | reverse" | jq -r ".[].latest")"
 }
 
 #evaluate "My Homepage" "Wordpress" "1.40.0\n1.39.5\n1.38.9" "1.38.9"
