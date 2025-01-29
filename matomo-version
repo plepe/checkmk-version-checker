@@ -3,8 +3,7 @@
 
 INSTALLS=`cat /etc/check_mk/matomo-version.cfg`
 
-DATE=$(date +"%Y-%m-%d")
-ALL_SUPPORTED=$(curl -s https://endoflife.date/api/matomo.json | jq -r ".[] | select(.eol >= \"${DATE}\" or .eol == false).latest")
+ALL_SUPPORTED=$(get_supported_endoflife "matomo")
 
 for I in $INSTALLS ; do
   VERSION=$(grep "const VERSION = '" "${I}/core/Version.php" | sed "s/^.*'\([0-9.]*\)';/\1/" | xargs)
