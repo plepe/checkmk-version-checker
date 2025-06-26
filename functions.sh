@@ -29,7 +29,11 @@ evaluate () {
     echo "0 \"${CHECK_NAME}\" - Current version: ${CURRENT_VERSION}"
   elif [ "${CURRENT_VERSION}" = "${LATEST_MINOR}" ] ; then
     echo "0 \"${CHECK_NAME}\" - Current version: ${CURRENT_VERSION} (still supported), available: ${NEWER_MAJOR_OR}"
-  elif [ "${LATEST_MINOR}" = "" ] || [ "${LATEST_MINOR}" = "${LATEST_VERSION}" ] ; then
+  elif [ "${LATEST_MINOR}" = "" ] ; then
+    local _SUPPORTED_VERSIONS=$(echo "${SUPPORTED_VERSIONS}" | tac | xargs)
+    local SUPPORTED_VERSIONS_OR=${_SUPPORTED_VERSIONS// / or }
+    echo "2 \"${CHECK_NAME}\" - Current version: ${CURRENT_VERSION} (not supported), available: ${SUPPORTED_VERSIONS_OR}"
+  elif [ "${LATEST_MINOR}" = "${LATEST_VERSION}" ] ; then
     echo "1 \"${CHECK_NAME}\" - Current version: ${CURRENT_VERSION}, available: ${LATEST_MINOR}"
   else
     echo "1 \"${CHECK_NAME}\" - Current version: ${CURRENT_VERSION}, available: ${LATEST_MINOR} or ${NEWER_MAJOR_OR}"
