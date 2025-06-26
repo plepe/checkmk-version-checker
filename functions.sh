@@ -22,15 +22,17 @@ evaluate () {
   local LATEST_VERSION=$(echo "${SUPPORTED_VERSIONS}" | head -n1 | xargs)
   local CURRENT_MINOR=$(echo ${CURRENT_VERSION} | cut -d\. -f1-2 | xargs)
   local LATEST_MINOR=$(echo "${SUPPORTED_VERSIONS}" | grep "^${CURRENT_MINOR}\." | head -n1 | xargs)
+  local NEWER_MAJOR=$(echo "${SUPPORTED_VERSIONS}" | grep -B5000 "^${CURRENT_MINOR}\." | head -n-1 | tac | xargs)
+  local NEWER_MAJOR_OR=${NEWER_MAJOR// / or }
 
   if [ "${CURRENT_VERSION}" = "${LATEST_VERSION}" ] ; then
     echo "0 \"${CHECK_NAME}\" - Current version: ${CURRENT_VERSION}"
   elif [ "${CURRENT_VERSION}" = "${LATEST_MINOR}" ] ; then
-    echo "0 \"${CHECK_NAME}\" - Current version: ${CURRENT_VERSION} (still supported), available: ${LATEST_VERSION}"
+    echo "0 \"${CHECK_NAME}\" - Current version: ${CURRENT_VERSION} (still supported), available: ${NEWER_MAJOR_OR}"
   elif [ "${LATEST_MINOR}" = "" ] || [ "${LATEST_MINOR}" = "${LATEST_VERSION}" ] ; then
-    echo "1 \"${CHECK_NAME}\" - Current version: ${CURRENT_VERSION}, available: ${LATEST_VERSION}"
+    echo "1 \"${CHECK_NAME}\" - Current version: ${CURRENT_VERSION}, available: ${LATEST_MINOR}"
   else
-    echo "1 \"${CHECK_NAME}\" - Current version: ${CURRENT_VERSION}, available: ${LATEST_VERSION} or ${LATEST_MINOR}"
+    echo "1 \"${CHECK_NAME}\" - Current version: ${CURRENT_VERSION}, available: ${LATEST_MINOR} or ${NEWER_MAJOR_OR}"
   fi
 }
 
