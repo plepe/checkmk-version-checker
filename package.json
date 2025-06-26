@@ -1,0 +1,5 @@
+{
+  "scripts": {
+    "test": "bats test/evaluate.bats"
+  }
+}

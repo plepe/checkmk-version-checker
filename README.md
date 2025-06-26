@@ -117,3 +117,6 @@ Checks if a new check-mk-raw version is available.
 You need to install 'jq' (e.g. `apt install jq`)
 
 Copy the script `check-mk-version` to `/usr/lib/check_mk_agent/local`.
+
+## Development
+You need to install "bats" (e.g. with 'apt install bats'). Run tests with "npm run test".
