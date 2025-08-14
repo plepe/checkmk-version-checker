@@ -2,7 +2,6 @@
 . "$(dirname "$(readlink -f "$0")")/functions.sh"
 
 SUPPORTED_VERSIONS=$(curl -s https://checkmk.com/de/download | grep '<select name="release"' | grep -oP 'data-version="\K[^"]+' | uniq)
-echo $SUPPORTED_VERSIONS
 VERSION=$(grep OMD_VERSION /opt/omd/sites/*/share/omd/omd.info | cut -d'=' -f2 | xargs)
 VERSION=${VERSION%.cre}
 # filter list for the newest production version
